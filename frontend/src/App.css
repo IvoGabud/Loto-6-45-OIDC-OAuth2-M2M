@@ -18,25 +18,28 @@ body {
 }
 
 h1 {
-  color: #fff;
+  color: #ffffff;
   margin-bottom: 2rem;
   font-size: 3rem;
   text-align: center;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
   letter-spacing: 2px;
   animation: fadeInDown 0.6s ease-out;
+  font-weight: 700;
 }
 
 h2 {
-  color: #2d3748;
+  color: #1a202c;
   margin: 1.5rem 0 1rem;
   font-size: 1.5rem;
+  font-weight: 700;
 }
 
 h3 {
-  color: #4a5568;
+  color: #2d3748;
   margin: 1rem 0 0.5rem;
   font-size: 1.2rem;
+  font-weight: 600;
 }
 
 @keyframes fadeInDown {
@@ -107,15 +110,17 @@ h3 {
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 2px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.95);
+  color: #2d3748;
+  border: 2px solid rgba(255, 255, 255, 1);
   backdrop-filter: blur(10px);
+  font-weight: 600;
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 1);
   transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
 }
 
 /* User section */
@@ -220,6 +225,20 @@ h3 {
   box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
 }
 
+.drawn-numbers {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: rgba(102, 126, 234, 0.08);
+  border-radius: 15px;
+  border: 2px solid rgba(102, 126, 234, 0.2);
+}
+
+.drawn-numbers h3 {
+  color: #2d3748;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
 .drawn-numbers .number-ball {
   animation-delay: calc(var(--i) * 0.1s);
 }
@@ -257,6 +276,12 @@ h3 {
   font-size: 1rem;
   transition: all 0.3s ease;
   background: white;
+  color: #2d3748;
+  font-weight: 500;
+}
+
+.form-group input::placeholder {
+  color: #a0aec0;
 }
 
 .form-group input:focus {
@@ -326,13 +351,15 @@ h3 {
 
 .matches {
   font-size: 2rem;
-  color: #fff;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  color: #ffffff;
+  text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+  font-weight: 600;
 }
 
 .matches strong {
   font-size: 2.5rem;
   color: #ffd700;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
 /* Messages */

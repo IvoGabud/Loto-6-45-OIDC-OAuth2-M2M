@@ -10,10 +10,16 @@ const router = express.Router();
 router.post('/', async (req: Request, res: Response) => {
   try {
     const { idNumber, numbers } = req.body;
+    console.log('=== TICKET SUBMISSION ===');
+    console.log('idNumber:', idNumber);
+    console.log('numbers:', numbers);
+    console.log('numbers type:', typeof numbers);
 
     // Validacija podataka
     const validation = validateTicket(idNumber, numbers);
+    console.log('Validation result:', validation);
     if (!validation.valid) {
+      console.log('Validation failed:', validation.error);
       return res.status(400).json({ error: validation.error });
     }
 
@@ -37,7 +43,8 @@ router.post('/', async (req: Request, res: Response) => {
     const ticketId = ticketResult.rows[0].id;
 
     // Generiraj QR kod
-    const ticketUrl = `${process.env.BASE_URL}/ticket/${ticketId}`;
+    const ticketUrl = `${process.env.FRONTEND_URL}/ticket/${ticketId}`;
+    console.log('Generated QR code for URL:', ticketUrl);
     const qrCode = await QRCode.toBuffer(ticketUrl, { type: 'png' });
 
     res.setHeader('Content-Type', 'image/png');
