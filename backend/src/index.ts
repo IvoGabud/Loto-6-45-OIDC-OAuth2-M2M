@@ -26,9 +26,7 @@ app.use('/api/tickets', ticketRoutes);
 app.use('/api/rounds', roundRoutes);
 
 // Admin routes (protected with M2M authentication)
-app.use('/new-round', adminRoutes);
-app.use('/close', adminRoutes);
-app.use('/store-results', adminRoutes);
+app.use('/', adminRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
