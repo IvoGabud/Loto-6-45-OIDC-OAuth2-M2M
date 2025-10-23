@@ -10,6 +10,20 @@ const migrate = async () => {
     }
 
     // Kreiraj tablice ako ne postoje
+
+    // Session tablica (za connect-pg-simple)
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS session (
+        sid VARCHAR NOT NULL COLLATE "default" PRIMARY KEY,
+        sess JSON NOT NULL,
+        expire TIMESTAMP(6) NOT NULL
+      );
+    `);
+
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON session (expire);
+    `);
+
     await pool.query(`
       CREATE TABLE IF NOT EXISTS rounds (
         id SERIAL PRIMARY KEY,
