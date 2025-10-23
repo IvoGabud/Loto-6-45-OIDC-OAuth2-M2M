@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+// Koristi relative path - frontend i backend su na istom domenu
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -42,11 +43,11 @@ export const getCurrentUser = async (): Promise<User | null> => {
 };
 
 export const login = () => {
-  window.location.href = `${API_URL}/auth/login`;
+  window.location.href = '/auth/login';
 };
 
 export const logout = () => {
-  window.location.href = `${API_URL}/auth/logout`;
+  window.location.href = '/auth/logout';
 };
 
 // Round endpoints
