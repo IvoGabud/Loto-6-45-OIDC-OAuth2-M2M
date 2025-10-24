@@ -13,10 +13,12 @@ export const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET || 'your-secret-key-change-this',
   resave: false,
   saveUninitialized: false,
+  proxy: true, // Trust Render.com proxy
   cookie: {
-    secure: process.env.NODE_ENV === 'production',
+    secure: true, // Uvijek true za HTTPS
     httpOnly: true,
-    sameSite: 'lax', // Isto domen, lax je dovoljno
-    maxAge: 24 * 60 * 60 * 1000 // 24 sata
+    sameSite: 'none', // none za Auth0 redirect (cross-site)
+    maxAge: 24 * 60 * 60 * 1000, // 24 sata
+    path: '/' // Eksplicitno postavi path
   }
 });

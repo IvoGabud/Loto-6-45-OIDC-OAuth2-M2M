@@ -37,8 +37,20 @@ router.get('/login', async (req: Request, res: Response) => {
     console.log('PKCE codes generated');
 
     req.session.codeVerifier = codeVerifier;
-    console.log('Code verifier saved to session');
-    console.log('Session ID at login:', req.sessionID);
+
+    // Eksplicitno sačuvaj sesiju prije redirecta
+    await new Promise<void>((resolve, reject) => {
+      req.session.save((err) => {
+        if (err) {
+          console.error('Session save error:', err);
+          reject(err);
+        } else {
+          console.log('Code verifier saved to session');
+          console.log('Session ID at login:', req.sessionID);
+          resolve();
+        }
+      });
+    });
 
     const authUrl = oauth.buildAuthorizationUrl(authServer, {
       scope: 'openid profile email',
