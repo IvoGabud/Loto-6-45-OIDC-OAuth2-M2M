@@ -76,7 +76,11 @@ router.get('/callback', async (req: Request, res: Response) => {
     console.log('Code verifier exists:', !!req.session.codeVerifier);
 
     const authServer = await getConfig();
-    const currentUrl = new URL(req.url, `http://${req.headers.host}`);
+
+    // Koristi HTTPS u production (Render.com proxy)
+    const protocol = req.headers['x-forwarded-proto'] || (req.secure ? 'https' : 'http');
+    const host = req.headers['x-forwarded-host'] || req.headers.host;
+    const currentUrl = new URL(req.url, `${protocol}://${host}`);
 
     // Provjeri da li postoji code verifier
     if (!req.session.codeVerifier) {
