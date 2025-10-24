@@ -38,6 +38,7 @@ router.get('/login', async (req: Request, res: Response) => {
 
     req.session.codeVerifier = codeVerifier;
     console.log('Code verifier saved to session');
+    console.log('Session ID at login:', req.sessionID);
 
     const authUrl = oauth.buildAuthorizationUrl(authServer, {
       scope: 'openid profile email',
@@ -57,13 +58,21 @@ router.get('/login', async (req: Request, res: Response) => {
 // GET /auth/callback - Callback nakon prijave
 router.get('/callback', async (req: Request, res: Response) => {
   try {
+    console.log('=== CALLBACK REQUEST ===');
+    console.log('Session ID:', req.sessionID);
+    console.log('Cookies:', req.headers.cookie);
+    console.log('Code verifier exists:', !!req.session.codeVerifier);
+
     const authServer = await getConfig();
     const currentUrl = new URL(req.url, `http://${req.headers.host}`);
 
     // Provjeri da li postoji code verifier
     if (!req.session.codeVerifier) {
+      console.error('ERROR: Code verifier missing from session!');
       return res.status(400).json({ error: 'Missing code verifier' });
     }
+
+    console.log('Code verifier found, proceeding with token exchange');
 
     const tokens = await oauth.authorizationCodeGrant(
       authServer,
