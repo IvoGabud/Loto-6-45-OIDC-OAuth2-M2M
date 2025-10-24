@@ -36,7 +36,7 @@ const frontendPath = path.join(__dirname, '..', 'public');
 app.use(express.static(frontendPath));
 
 // SPA fallback - sve ostale rute vraćaju index.html
-app.get('*', (req, res) => {
+app.use((req, res) => {
   res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
