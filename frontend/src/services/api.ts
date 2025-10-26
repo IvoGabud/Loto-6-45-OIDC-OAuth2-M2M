@@ -1,10 +1,8 @@
 import axios from 'axios';
 
-// Koristi relative path - frontend i backend su na istom domenu
-const API_URL = import.meta.env.VITE_API_URL || '';
-
+// Koristi relative paths - frontend i backend su na istom domenu
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: '',
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
