@@ -21,20 +21,13 @@ const getConfig = async () => {
   return config;
 };
 
-// GET /auth/login - Rozpoczni prijavu
+// GET /auth/login - Započni prijavu
 router.get('/login', async (req: Request, res: Response) => {
   try {
-    console.log('=== LOGIN REQUEST ===');
-    console.log('AUTH0_ISSUER_BASE_URL:', process.env.AUTH0_ISSUER_BASE_URL);
-    console.log('AUTH0_CLIENT_ID:', process.env.AUTH0_CLIENT_ID?.substring(0, 10) + '...');
-    console.log('AUTH0_CALLBACK_URL:', process.env.AUTH0_CALLBACK_URL);
-
     const authServer = await getConfig();
-    console.log('Auth server configured successfully');
 
     const codeVerifier = oauth.randomPKCECodeVerifier();
     const codeChallenge = await oauth.calculatePKCECodeChallenge(codeVerifier);
-    console.log('PKCE codes generated');
 
     req.session.codeVerifier = codeVerifier;
 
@@ -45,8 +38,6 @@ router.get('/login', async (req: Request, res: Response) => {
           console.error('Session save error:', err);
           reject(err);
         } else {
-          console.log('Code verifier saved to session');
-          console.log('Session ID at login:', req.sessionID);
           resolve();
         }
       });
@@ -59,10 +50,9 @@ router.get('/login', async (req: Request, res: Response) => {
       redirect_uri: process.env.AUTH0_CALLBACK_URL!
     });
 
-    console.log('Redirecting to:', authUrl.href);
     res.redirect(authUrl.href);
   } catch (error) {
-    console.error('Login error DETAILS:', error);
+    console.error('Login error:', error);
     res.status(500).json({ error: 'Authentication failed', details: error instanceof Error ? error.message : String(error) });
   }
 });
@@ -70,11 +60,6 @@ router.get('/login', async (req: Request, res: Response) => {
 // GET /auth/callback - Callback nakon prijave
 router.get('/callback', async (req: Request, res: Response) => {
   try {
-    console.log('=== CALLBACK REQUEST ===');
-    console.log('Session ID:', req.sessionID);
-    console.log('Cookies:', req.headers.cookie);
-    console.log('Code verifier exists:', !!req.session.codeVerifier);
-
     const authServer = await getConfig();
 
     // Koristi HTTPS u production (Render.com proxy)
@@ -82,13 +67,10 @@ router.get('/callback', async (req: Request, res: Response) => {
     const host = req.headers['x-forwarded-host'] || req.headers.host;
     const currentUrl = new URL(req.url, `${protocol}://${host}`);
 
-    // Provjeri da li postoji code verifier
     if (!req.session.codeVerifier) {
-      console.error('ERROR: Code verifier missing from session!');
+      console.error('Code verifier missing from session');
       return res.status(400).json({ error: 'Missing code verifier' });
     }
-
-    console.log('Code verifier found, proceeding with token exchange');
 
     const tokens = await oauth.authorizationCodeGrant(
       authServer,
@@ -101,7 +83,6 @@ router.get('/callback', async (req: Request, res: Response) => {
     // Dohvati claims iz ID tokena
     let claims: any = {};
     if (tokens.id_token) {
-      // Decode JWT manually (base64)
       const parts = tokens.id_token.split('.');
       if (parts.length === 3 && parts[1]) {
         const payload = parts[1];
@@ -121,7 +102,7 @@ router.get('/callback', async (req: Request, res: Response) => {
 
     delete req.session.codeVerifier;
 
-    res.redirect(process.env.FRONTEND_URL || 'http://localhost:3000');
+    res.redirect(process.env.FRONTEND_URL || '/');
   } catch (error) {
     console.error('Callback error:', error);
     res.status(500).json({ error: 'Authentication callback failed' });
@@ -137,9 +118,9 @@ router.get('/user', (req: Request, res: Response) => {
   }
 });
 
-// GET /auth/logout - Odjava (preusmjeri na Auth0 logout)
+// GET /auth/logout - Odjava
 router.get('/logout', (req: Request, res: Response) => {
-  const returnTo = encodeURIComponent(process.env.FRONTEND_URL || 'http://localhost:5173');
+  const returnTo = encodeURIComponent(process.env.FRONTEND_URL || '/');
   const logoutUrl = `${process.env.AUTH0_ISSUER_BASE_URL}/v2/logout?client_id=${process.env.AUTH0_CLIENT_ID}&returnTo=${returnTo}`;
 
   req.session.destroy((err) => {
