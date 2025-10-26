@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { submitTicket } from '../services/api';
+import { submitTicket, getCurrentUser } from '../services/api';
 
 function SubmitTicket() {
   const [idNumber, setIdNumber] = useState('');
@@ -8,7 +8,27 @@ function SubmitTicket() {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const userData = await getCurrentUser();
+        if (!userData) {
+          // User is not authenticated, redirect to home
+          navigate('/');
+        } else {
+          setLoading(false);
+        }
+      } catch (error) {
+        // Error fetching user, redirect to home
+        navigate('/');
+      }
+    };
+
+    checkAuth();
+  }, [navigate]);
 
   const toggleNumber = (num: number) => {
     if (selectedNumbers.includes(num)) {
@@ -70,6 +90,15 @@ function SubmitTicket() {
     setError('');
   };
 
+  // Show loading screen while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-pulse text-gray-600">Učitavanje...</div>
+      </div>
+    );
+  }
+
   if (qrCodeUrl) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -103,7 +132,7 @@ function SubmitTicket() {
                 {selectedNumbers.map((num) => (
                   <div
                     key={num}
-                    className="w-10 h-10 flex items-center justify-center text-sm font-bold text-white bg-red-600 rounded-full"
+                    className="w-10 h-10 flex items-center justify-center text-sm font-bold text-white bg-blue-600 rounded-full"
                   >
                     {num}
                   </div>
@@ -114,7 +143,7 @@ function SubmitTicket() {
             <div className="space-y-3 pt-4">
               <button
                 onClick={handleDownload}
-                className="w-full px-6 py-3.5 text-base font-semibold text-white bg-red-600 rounded-xl hover:bg-red-700 transition-colors shadow-sm hover:shadow-md"
+                className="w-full px-6 py-3.5 text-base font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors shadow-sm hover:shadow-md"
               >
                 Preuzmi QR kod
               </button>
@@ -177,13 +206,13 @@ function SubmitTicket() {
                 Odaberite brojeve
               </h2>
               <div className="text-sm text-gray-600">
-                <span className="font-semibold text-red-600">{selectedNumbers.length}</span> / 10 odabrano
+                <span className="font-semibold text-blue-600">{selectedNumbers.length}</span> / 10 odabrano
               </div>
             </div>
 
             {selectedNumbers.length >= 6 && (
-              <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-xl">
-                <p className="text-sm text-red-800 text-center">
+              <div className="mb-6 p-3 bg-blue-50 border border-blue-200 rounded-xl">
+                <p className="text-sm text-blue-800 text-center">
                   Možete odabrati između 6 i 10 brojeva
                 </p>
               </div>
@@ -201,8 +230,8 @@ function SubmitTicket() {
                     className={`
                       aspect-square flex items-center justify-center rounded-xl text-lg font-semibold transition-all
                       ${isSelected
-                        ? 'bg-red-600 text-white shadow-md scale-105'
-                        : 'bg-gray-50 text-gray-900 border border-gray-200 hover:border-red-300 hover:bg-red-50'
+                        ? 'bg-blue-600 text-white shadow-md scale-105'
+                        : 'bg-gray-50 text-gray-900 border border-gray-200 hover:border-blue-300 hover:bg-blue-50'
                       }
                       ${!isSelected && selectedNumbers.length >= 10 ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}
                     `}
@@ -220,7 +249,7 @@ function SubmitTicket() {
                   {selectedNumbers.map((num) => (
                     <div
                       key={num}
-                      className="w-10 h-10 flex items-center justify-center text-sm font-bold text-white bg-red-600 rounded-full"
+                      className="w-10 h-10 flex items-center justify-center text-sm font-bold text-white bg-blue-600 rounded-full"
                     >
                       {num}
                     </div>
@@ -239,7 +268,7 @@ function SubmitTicket() {
           <button
             type="submit"
             disabled={submitting || selectedNumbers.length < 6}
-            className="w-full px-6 py-4 text-lg font-semibold text-white bg-red-600 rounded-xl hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-sm hover:shadow-md"
+            className="w-full px-6 py-4 text-lg font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-sm hover:shadow-md"
           >
             {submitting ? 'Slanje...' : 'Uplati listić'}
           </button>

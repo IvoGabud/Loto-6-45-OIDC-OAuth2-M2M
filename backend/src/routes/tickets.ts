@@ -3,10 +3,12 @@ import type { Request, Response } from 'express';
 import QRCode from 'qrcode';
 import pool from '../database/db.js';
 import { validateTicket } from '../utils/validation.js';
+import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
-router.post('/', async (req: Request, res: Response) => {
+// POST /api/tickets - Uplata listića (zahtijeva autentifikaciju)
+router.post('/', requireAuth, async (req: Request, res: Response) => {
   try {
     const { idNumber, numbers } = req.body;
     console.log('=== TICKET SUBMISSION ===');
