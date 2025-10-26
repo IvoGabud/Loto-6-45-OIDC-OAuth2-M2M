@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// Koristi relative paths - frontend i backend su na istom domenu
 const api = axios.create({
   baseURL: '',
   withCredentials: true,
