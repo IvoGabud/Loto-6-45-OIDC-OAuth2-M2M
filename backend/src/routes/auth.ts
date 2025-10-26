@@ -6,7 +6,6 @@ const router = express.Router();
 
 let config: oauth.Configuration | null = null;
 
-// Inicijalizacija OpenID Client
 const getConfig = async () => {
   if (config) return config;
 
@@ -21,7 +20,6 @@ const getConfig = async () => {
   return config;
 };
 
-// GET /auth/login - Započni prijavu
 router.get('/login', async (req: Request, res: Response) => {
   try {
     const authServer = await getConfig();
@@ -31,7 +29,6 @@ router.get('/login', async (req: Request, res: Response) => {
 
     req.session.codeVerifier = codeVerifier;
 
-    // Eksplicitno sačuvaj sesiju prije redirecta
     await new Promise<void>((resolve, reject) => {
       req.session.save((err) => {
         if (err) {
@@ -57,12 +54,10 @@ router.get('/login', async (req: Request, res: Response) => {
   }
 });
 
-// GET /auth/callback - Callback nakon prijave
 router.get('/callback', async (req: Request, res: Response) => {
   try {
     const authServer = await getConfig();
 
-    // Koristi HTTPS u production (Render.com proxy)
     const protocol = req.headers['x-forwarded-proto'] || (req.secure ? 'https' : 'http');
     const host = req.headers['x-forwarded-host'] || req.headers.host;
     const currentUrl = new URL(req.url, `${protocol}://${host}`);
@@ -80,7 +75,6 @@ router.get('/callback', async (req: Request, res: Response) => {
       }
     );
 
-    // Dohvati claims iz ID tokena
     let claims: any = {};
     if (tokens.id_token) {
       const parts = tokens.id_token.split('.');
@@ -91,7 +85,6 @@ router.get('/callback', async (req: Request, res: Response) => {
       }
     }
 
-    // Postavi user session
     if (tokens.access_token) {
       req.session.user = {
         accessToken: tokens.access_token,
@@ -109,7 +102,6 @@ router.get('/callback', async (req: Request, res: Response) => {
   }
 });
 
-// GET /auth/user - Dohvati trenutnog korisnika
 router.get('/user', (req: Request, res: Response) => {
   if (req.session.user) {
     res.json(req.session.user.claims);
@@ -118,7 +110,6 @@ router.get('/user', (req: Request, res: Response) => {
   }
 });
 
-// GET /auth/logout - Odjava
 router.get('/logout', (req: Request, res: Response) => {
   const returnTo = encodeURIComponent(process.env.FRONTEND_URL || '/');
   const logoutUrl = `${process.env.AUTH0_ISSUER_BASE_URL}/v2/logout?client_id=${process.env.AUTH0_CLIENT_ID}&returnTo=${returnTo}`;

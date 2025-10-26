@@ -6,7 +6,6 @@ import { validateTicket } from '../utils/validation.js';
 
 const router = express.Router();
 
-// POST /api/tickets - Uplata listića
 router.post('/', async (req: Request, res: Response) => {
   try {
     const { idNumber, numbers } = req.body;
@@ -15,7 +14,6 @@ router.post('/', async (req: Request, res: Response) => {
     console.log('numbers:', numbers);
     console.log('numbers type:', typeof numbers);
 
-    // Validacija podataka
     const validation = validateTicket(idNumber, numbers);
     console.log('Validation result:', validation);
     if (!validation.valid) {
@@ -23,7 +21,6 @@ router.post('/', async (req: Request, res: Response) => {
       return res.status(400).json({ error: validation.error });
     }
 
-    // Provjeri postoji li aktivno kolo
     const roundResult = await pool.query(
       'SELECT id FROM rounds WHERE is_active = true ORDER BY id DESC LIMIT 1'
     );
@@ -34,7 +31,6 @@ router.post('/', async (req: Request, res: Response) => {
 
     const roundId = roundResult.rows[0].id;
 
-    // Kreiraj listić u bazi
     const ticketResult = await pool.query(
       'INSERT INTO tickets (round_id, id_number, numbers) VALUES ($1, $2, $3) RETURNING id',
       [roundId, idNumber.trim(), numbers]
@@ -42,7 +38,6 @@ router.post('/', async (req: Request, res: Response) => {
 
     const ticketId = ticketResult.rows[0].id;
 
-    // Generiraj QR kod
     const ticketUrl = `${process.env.FRONTEND_URL}/ticket/${ticketId}`;
     console.log('Generated QR code for URL:', ticketUrl);
     const qrCode = await QRCode.toBuffer(ticketUrl, { type: 'png' });
@@ -55,7 +50,6 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
-// GET /api/tickets/:id - Dohvat podataka o listiću
 router.get('/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;

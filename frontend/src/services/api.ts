@@ -30,7 +30,6 @@ export interface User {
   picture?: string;
 }
 
-// Auth endpoints
 export const getCurrentUser = async (): Promise<User | null> => {
   try {
     const response = await api.get('/auth/user');
@@ -48,13 +47,11 @@ export const logout = () => {
   window.location.href = '/auth/logout';
 };
 
-// Round endpoints
 export const getCurrentRound = async (): Promise<CurrentRoundData> => {
   const response = await api.get('/api/rounds/current');
   return response.data;
 };
 
-// Ticket endpoints
 export const submitTicket = async (idNumber: string, numbers: number[]): Promise<Blob> => {
   const response = await api.post('/api/tickets', { idNumber, numbers }, {
     responseType: 'blob'

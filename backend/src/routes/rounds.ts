@@ -4,7 +4,6 @@ import pool from '../database/db.js';
 
 const router = express.Router();
 
-// GET /api/rounds/current - Dohvat podataka o trenutnom kolu
 router.get('/current', async (_req: Request, res: Response) => {
   try {
     const result = await pool.query(
@@ -22,7 +21,6 @@ router.get('/current', async (_req: Request, res: Response) => {
 
     const round = result.rows[0];
 
-    // Broji listiće u trenutnom kolu
     const countResult = await pool.query(
       'SELECT COUNT(*) as count FROM tickets WHERE round_id = $1',
       [round.id]

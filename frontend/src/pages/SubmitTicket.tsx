@@ -39,7 +39,6 @@ function SubmitTicket() {
     try {
       const qrBlob = await submitTicket(idNumber, selectedNumbers);
 
-      // Create URL for displaying the QR code
       const url = window.URL.createObjectURL(qrBlob);
       setQrCodeUrl(url);
     } catch (err: any) {
@@ -71,21 +70,17 @@ function SubmitTicket() {
     setError('');
   };
 
-  // If QR code is available, show success screen
   if (qrCodeUrl) {
     return (
       <div className="min-h-screen bg-gray-50">
-        {/* Header */}
         <header className="bg-white border-b border-gray-200">
           <div className="max-w-4xl mx-auto px-4 py-6">
             <h1 className="text-2xl font-bold text-gray-900 text-center">Listić uspješno uplaćen!</h1>
           </div>
         </header>
 
-        {/* Main Content */}
         <main className="max-w-2xl mx-auto px-4 py-8">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 space-y-6">
-            {/* Success Message */}
             <div className="text-center">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -96,21 +91,19 @@ function SubmitTicket() {
               <p className="text-gray-600">Skenirajte QR kod kako biste kasnije provjerili rezultate</p>
             </div>
 
-            {/* QR Code Display */}
             <div className="flex justify-center py-6">
               <div className="bg-white p-4 rounded-xl border-2 border-gray-200 shadow-sm">
                 <img src={qrCodeUrl} alt="Ticket QR Code" className="w-64 h-64" />
               </div>
             </div>
 
-            {/* Selected Numbers */}
             <div className="border-t border-gray-200 pt-6">
               <p className="text-sm font-medium text-gray-700 mb-3 text-center">Vaši odabrani brojevi:</p>
               <div className="flex flex-wrap gap-2 justify-center">
                 {selectedNumbers.map((num) => (
                   <div
                     key={num}
-                    className="w-10 h-10 flex items-center justify-center text-sm font-bold text-white bg-blue-600 rounded-full"
+                    className="w-10 h-10 flex items-center justify-center text-sm font-bold text-white bg-red-600 rounded-full"
                   >
                     {num}
                   </div>
@@ -118,11 +111,10 @@ function SubmitTicket() {
               </div>
             </div>
 
-            {/* Action Buttons */}
             <div className="space-y-3 pt-4">
               <button
                 onClick={handleDownload}
-                className="w-full px-6 py-3.5 text-base font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors shadow-sm hover:shadow-md"
+                className="w-full px-6 py-3.5 text-base font-semibold text-white bg-red-600 rounded-xl hover:bg-red-700 transition-colors shadow-sm hover:shadow-md"
               >
                 Preuzmi QR kod
               </button>
@@ -147,7 +139,6 @@ function SubmitTicket() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center gap-4">
@@ -164,10 +155,8 @@ function SubmitTicket() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-8">
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* ID Number Input */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
             <label htmlFor="idNumber" className="block text-sm font-semibold text-gray-900 mb-3">
               Broj osobne iskaznice
@@ -182,26 +171,24 @@ function SubmitTicket() {
             />
           </div>
 
-          {/* Number Picker */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-lg font-semibold text-gray-900">
                 Odaberite brojeve
               </h2>
               <div className="text-sm text-gray-600">
-                <span className="font-semibold text-blue-600">{selectedNumbers.length}</span> / 10 odabrano
+                <span className="font-semibold text-red-600">{selectedNumbers.length}</span> / 10 odabrano
               </div>
             </div>
 
             {selectedNumbers.length >= 6 && (
-              <div className="mb-6 p-3 bg-blue-50 border border-blue-200 rounded-xl">
-                <p className="text-sm text-blue-800 text-center">
+              <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-xl">
+                <p className="text-sm text-red-800 text-center">
                   Možete odabrati između 6 i 10 brojeva
                 </p>
               </div>
             )}
 
-            {/* Number Grid */}
             <div className="grid grid-cols-5 sm:grid-cols-9 gap-2 mb-6">
               {Array.from({ length: 45 }, (_, i) => i + 1).map((num) => {
                 const isSelected = selectedNumbers.includes(num);
@@ -214,8 +201,8 @@ function SubmitTicket() {
                     className={`
                       aspect-square flex items-center justify-center rounded-xl text-lg font-semibold transition-all
                       ${isSelected
-                        ? 'bg-blue-600 text-white shadow-md scale-105'
-                        : 'bg-gray-50 text-gray-900 border border-gray-200 hover:border-blue-300 hover:bg-blue-50'
+                        ? 'bg-red-600 text-white shadow-md scale-105'
+                        : 'bg-gray-50 text-gray-900 border border-gray-200 hover:border-red-300 hover:bg-red-50'
                       }
                       ${!isSelected && selectedNumbers.length >= 10 ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}
                     `}
@@ -226,7 +213,6 @@ function SubmitTicket() {
               })}
             </div>
 
-            {/* Selected Numbers Display */}
             {selectedNumbers.length > 0 && (
               <div>
                 <p className="text-sm font-medium text-gray-700 mb-3">Odabrani brojevi:</p>
@@ -234,7 +220,7 @@ function SubmitTicket() {
                   {selectedNumbers.map((num) => (
                     <div
                       key={num}
-                      className="w-10 h-10 flex items-center justify-center text-sm font-bold text-white bg-blue-600 rounded-full"
+                      className="w-10 h-10 flex items-center justify-center text-sm font-bold text-white bg-red-600 rounded-full"
                     >
                       {num}
                     </div>
@@ -244,18 +230,16 @@ function SubmitTicket() {
             )}
           </div>
 
-          {/* Error Message */}
           {error && (
             <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
               <p className="text-red-800 text-center">{error}</p>
             </div>
           )}
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={submitting || selectedNumbers.length < 6}
-            className="w-full px-6 py-4 text-lg font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-sm hover:shadow-md"
+            className="w-full px-6 py-4 text-lg font-semibold text-white bg-red-600 rounded-xl hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-sm hover:shadow-md"
           >
             {submitting ? 'Slanje...' : 'Uplati listić'}
           </button>

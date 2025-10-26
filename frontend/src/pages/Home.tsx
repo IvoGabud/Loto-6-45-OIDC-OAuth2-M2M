@@ -41,7 +41,6 @@ function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex justify-between items-center">
@@ -69,7 +68,7 @@ function Home() {
             ) : (
               <button
                 onClick={login}
-                className="px-6 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                className="px-6 py-2.5 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
               >
                 Prijava
               </button>
@@ -78,24 +77,20 @@ function Home() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-12">
-        {/* Round Info Card */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Trenutno kolo</h2>
 
           {roundData?.exists ? (
             <div className="space-y-6">
-              {/* Ticket Count */}
               <div className="flex items-center gap-3 text-gray-700">
-                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 <span className="font-medium">Uplaćeno listića:</span>
-                <span className="font-bold text-blue-600">{roundData.ticketCount}</span>
+                <span className="font-bold text-red-600">{roundData.ticketCount}</span>
               </div>
 
-              {/* Drawn Numbers */}
               {roundData.drawnNumbers && roundData.drawnNumbers.length > 0 && (
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Izvučeni brojevi:</h3>
@@ -103,7 +98,7 @@ function Home() {
                     {roundData.drawnNumbers.map((num, idx) => (
                       <div
                         key={idx}
-                        className="w-14 h-14 flex items-center justify-center text-xl font-bold text-white bg-blue-600 rounded-full shadow-md"
+                        className="w-14 h-14 flex items-center justify-center text-xl font-bold text-white bg-red-600 rounded-full shadow-md"
                       >
                         {num}
                       </div>
@@ -112,40 +107,27 @@ function Home() {
                 </div>
               )}
 
-              {/* Actions */}
               <div className="pt-4">
-                {roundData.isActive && user && (
+                {roundData.isActive && user ? (
                   <button
                     onClick={() => navigate('/uplata')}
-                    className="w-full px-6 py-3.5 text-base font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors shadow-sm hover:shadow-md"
+                    className="w-full px-6 py-3.5 text-base font-semibold text-white bg-red-600 rounded-xl hover:bg-red-700 transition-colors shadow-sm hover:shadow-md"
                   >
                     Uplati listić
                   </button>
-                )}
-
-                {!roundData.isActive && !roundData.drawnNumbers && (
-                  <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl">
-                    <p className="text-amber-800 text-center">
-                      Uplate su trenutno zatvorene. Očekuje se izvlačenje brojeva.
-                    </p>
-                  </div>
-                )}
-
-                {!roundData.isActive && !user && (
-                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                    <p className="text-blue-800 text-center">
+                ) : !roundData.isActive && !user ? (
+                  <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
+                    <p className="text-red-800 text-center">
                       Prijavite se kako biste mogli uplatiti listić kada se uplate otvore.
                     </p>
                   </div>
-                )}
-
-                {!roundData.isActive && user && (
-                  <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl">
-                    <p className="text-gray-700 text-center">
-                      Uplate su trenutno zatvorene. Čeka se aktiviranje novog kola.
+                ) : !roundData.isActive && user ? (
+                  <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                    <p className="text-amber-800 text-center">
+                      Uplate su trenutno zatvorene. {roundData.drawnNumbers ? 'Čeka se aktiviranje novog kola.' : 'Očekuje se izvlačenje brojeva.'}
                     </p>
                   </div>
-                )}
+                ) : null}
               </div>
             </div>
           ) : (

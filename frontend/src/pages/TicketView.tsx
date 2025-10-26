@@ -83,7 +83,6 @@ function TicketView() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center gap-4">
@@ -101,10 +100,8 @@ function TicketView() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-8">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-6">
-          {/* Ticket Information */}
           <div className="space-y-4">
             <div className="flex items-start justify-between py-3 border-b border-gray-100">
               <span className="text-sm font-medium text-gray-600">ID listića:</span>
@@ -122,7 +119,6 @@ function TicketView() {
             </div>
           </div>
 
-          {/* User's Numbers */}
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Vaši brojevi:</h3>
             <div className="flex flex-wrap gap-3">
@@ -132,7 +128,7 @@ function TicketView() {
                   className={`w-14 h-14 flex items-center justify-center text-xl font-bold rounded-full shadow-md transition-all ${
                     ticket.drawnNumbers?.includes(num)
                       ? 'bg-green-600 text-white scale-110'
-                      : 'bg-blue-600 text-white'
+                      : 'bg-red-600 text-white'
                   }`}
                 >
                   {num}
@@ -141,7 +137,6 @@ function TicketView() {
             </div>
           </div>
 
-          {/* Drawn Numbers and Results */}
           {ticket.drawnNumbers && ticket.drawnNumbers.length > 0 ? (
             <>
               <div>
@@ -158,13 +153,13 @@ function TicketView() {
                 </div>
               </div>
 
-              <div className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl">
+              <div className="p-6 bg-gradient-to-br from-red-50 to-red-100 border border-red-200 rounded-xl">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Rezultat:</h3>
-                <p className="text-2xl font-bold text-blue-900">
+                <p className="text-2xl font-bold text-red-900">
                   Pogodili ste {matches} {matches === 1 ? 'broj' : 'brojeva'}
                 </p>
                 {matches >= 6 && (
-                  <p className="mt-2 text-sm text-blue-800">
+                  <p className="mt-2 text-sm text-red-800">
                     Čestitamo! Ostvarili ste dobitak! 🎉
                   </p>
                 )}

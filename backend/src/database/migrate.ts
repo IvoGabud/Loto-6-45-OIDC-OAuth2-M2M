@@ -2,16 +2,12 @@ import pool from './db.js';
 
 const migrate = async () => {
   try {
-    // Samo u development modu briši postojeće tablice
     if (process.env.NODE_ENV === 'development') {
       await pool.query(`DROP TABLE IF EXISTS tickets CASCADE;`);
       await pool.query(`DROP TABLE IF EXISTS rounds CASCADE;`);
       console.log('Dropped existing tables (development mode)...');
     }
 
-    // Kreiraj tablice ako ne postoje
-
-    // Session tablica (za connect-pg-simple)
     await pool.query(`
       CREATE TABLE IF NOT EXISTS session (
         sid VARCHAR NOT NULL COLLATE "default" PRIMARY KEY,

@@ -16,29 +16,23 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Trust Render.com proxy
 app.set('trust proxy', 1);
 
-// Middleware
 app.use(express.json());
 app.use(sessionMiddleware);
 
-// API Routes
 app.use('/auth', authRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/rounds', roundRoutes);
 app.use('/', adminRoutes); // Admin routes na root path
 
-// Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-// Serviranje static frontend fajlova (nakon svih API ruta)
 const frontendPath = path.join(__dirname, '..', 'public');
 app.use(express.static(frontendPath));
 
-// SPA fallback - sve ostale rute vraćaju index.html
 app.use((req, res) => {
   res.sendFile(path.join(frontendPath, 'index.html'));
 });

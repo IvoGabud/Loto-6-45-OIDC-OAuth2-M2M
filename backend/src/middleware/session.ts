@@ -8,17 +8,17 @@ export const sessionMiddleware = session({
   store: new PgStore({
     pool: pool,
     tableName: 'session',
-    createTableIfMissing: true // Automatski kreira tablicu ako ne postoji
+    createTableIfMissing: true
   }),
   secret: process.env.SESSION_SECRET || 'your-secret-key-change-this',
   resave: false,
   saveUninitialized: false,
-  proxy: true, // Trust Render.com proxy
+  proxy: true,
   cookie: {
-    secure: true, // Uvijek true za HTTPS
+    secure: true,
     httpOnly: true,
-    sameSite: 'none', // none za Auth0 redirect (cross-site)
-    maxAge: 24 * 60 * 60 * 1000, // 24 sata
-    path: '/' // Eksplicitno postavi path
+    sameSite: 'none',
+    maxAge: 24 * 60 * 60 * 1000,
+    path: '/'
   }
 });
