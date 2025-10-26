@@ -7,6 +7,7 @@ function SubmitTicket() {
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const toggleNumber = (num: number) => {
@@ -36,20 +37,11 @@ function SubmitTicket() {
     setSubmitting(true);
 
     try {
-      const pdfBlob = await submitTicket(idNumber, selectedNumbers);
+      const qrBlob = await submitTicket(idNumber, selectedNumbers);
 
-      // Download PDF
-      const url = window.URL.createObjectURL(pdfBlob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `loto-ticket-${Date.now()}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-
-      // Navigate home
-      navigate('/');
+      // Create URL for displaying the QR code
+      const url = window.URL.createObjectURL(qrBlob);
+      setQrCodeUrl(url);
     } catch (err: any) {
       console.error('Submit error:', err);
       setError(err.response?.data?.error || 'Greška pri slanju listica');
@@ -57,6 +49,101 @@ function SubmitTicket() {
       setSubmitting(false);
     }
   };
+
+  const handleDownload = () => {
+    if (!qrCodeUrl) return;
+
+    const a = document.createElement('a');
+    a.href = qrCodeUrl;
+    a.download = `loto-ticket-${Date.now()}.png`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  const handleNewTicket = () => {
+    if (qrCodeUrl) {
+      window.URL.revokeObjectURL(qrCodeUrl);
+    }
+    setQrCodeUrl(null);
+    setIdNumber('');
+    setSelectedNumbers([]);
+    setError('');
+  };
+
+  // If QR code is available, show success screen
+  if (qrCodeUrl) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        {/* Header */}
+        <header className="bg-white border-b border-gray-200">
+          <div className="max-w-4xl mx-auto px-4 py-6">
+            <h1 className="text-2xl font-bold text-gray-900 text-center">Listić uspješno uplaćen!</h1>
+          </div>
+        </header>
+
+        {/* Main Content */}
+        <main className="max-w-2xl mx-auto px-4 py-8">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 space-y-6">
+            {/* Success Message */}
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">Vaš listić je uspješno uplaćen</h2>
+              <p className="text-gray-600">Skenirajte QR kod kako biste kasnije provjerili rezultate</p>
+            </div>
+
+            {/* QR Code Display */}
+            <div className="flex justify-center py-6">
+              <div className="bg-white p-4 rounded-xl border-2 border-gray-200 shadow-sm">
+                <img src={qrCodeUrl} alt="Ticket QR Code" className="w-64 h-64" />
+              </div>
+            </div>
+
+            {/* Selected Numbers */}
+            <div className="border-t border-gray-200 pt-6">
+              <p className="text-sm font-medium text-gray-700 mb-3 text-center">Vaši odabrani brojevi:</p>
+              <div className="flex flex-wrap gap-2 justify-center">
+                {selectedNumbers.map((num) => (
+                  <div
+                    key={num}
+                    className="w-10 h-10 flex items-center justify-center text-sm font-bold text-white bg-blue-600 rounded-full"
+                  >
+                    {num}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="space-y-3 pt-4">
+              <button
+                onClick={handleDownload}
+                className="w-full px-6 py-3.5 text-base font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors shadow-sm hover:shadow-md"
+              >
+                Preuzmi QR kod
+              </button>
+              <button
+                onClick={handleNewTicket}
+                className="w-full px-6 py-3.5 text-base font-semibold text-gray-700 bg-white border-2 border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
+              >
+                Uplati novi listić
+              </button>
+              <button
+                onClick={() => navigate('/')}
+                className="w-full px-6 py-3.5 text-base font-medium text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                Povratak na početnu
+              </button>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

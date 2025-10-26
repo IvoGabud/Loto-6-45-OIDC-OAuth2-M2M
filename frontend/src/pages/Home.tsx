@@ -49,6 +49,13 @@ function Home() {
 
             {user ? (
               <div className="flex items-center gap-4">
+                {user.picture && (
+                  <img
+                    src={user.picture}
+                    alt={user.name || 'User'}
+                    className="w-10 h-10 rounded-full border-2 border-gray-200"
+                  />
+                )}
                 <span className="text-sm text-gray-600">
                   {user.email || user.name}
                 </span>
