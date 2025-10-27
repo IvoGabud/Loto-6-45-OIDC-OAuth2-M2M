@@ -5,11 +5,11 @@ export interface ValidationResult {
 
 export const validateTicket = (idNumber: string, numbers: number[]): ValidationResult => {
   if (!idNumber || idNumber.trim().length === 0) {
-    return { valid: false, error: 'Broj osobne iskaznice ne smije biti prazan' };
+    return { valid: false, error: 'Broj osobne iskaznice ili putovnice ne smije biti prazan' };
   }
 
   if (idNumber.length > 20) {
-    return { valid: false, error: 'Broj osobne iskaznice ne smije biti duži od 20 znakova' };
+    return { valid: false, error: 'Broj osobne iskaznice ili putovnice ne smije biti duži od 20 znakova' };
   }
 
   if (numbers.length < 6 || numbers.length > 10) {

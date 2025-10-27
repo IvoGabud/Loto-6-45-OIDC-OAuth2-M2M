@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { submitTicket, getCurrentUser } from '../services/api';
+import { submitTicket, getCurrentUser, getCurrentRound } from '../services/api';
 
 function SubmitTicket() {
   const [idNumber, setIdNumber] = useState('');
@@ -45,7 +45,12 @@ function SubmitTicket() {
     setError('');
 
     if (!idNumber.trim()) {
-      setError('Unesite broj osobne iskaznice');
+      setError('Unesite broj osobne iskaznice ili putovnice');
+      return;
+    }
+
+    if (idNumber.length > 20) {
+      setError('Broj osobne iskaznice ili putovnice ne može biti duži od 20 znamenki');
       return;
     }
 
@@ -57,6 +62,14 @@ function SubmitTicket() {
     setSubmitting(true);
 
     try {
+      // Check if round is still active before submitting
+      const roundData = await getCurrentRound();
+      if (!roundData.exists || !roundData.isActive) {
+        setError('Uplate su zatvorene. Trenutno nije moguće uplatiti listić.');
+        setSubmitting(false);
+        return;
+      }
+
       const qrBlob = await submitTicket(idNumber, selectedNumbers);
 
       const url = window.URL.createObjectURL(qrBlob);
@@ -188,16 +201,22 @@ function SubmitTicket() {
         <form onSubmit={handleSubmit} className="space-y-8">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
             <label htmlFor="idNumber" className="block text-sm font-semibold text-gray-900 mb-3">
-              Broj osobne iskaznice
+              Broj osobne iskaznice ili putovnice
             </label>
             <input
               type="text"
               id="idNumber"
               value={idNumber}
               onChange={(e) => setIdNumber(e.target.value)}
-              placeholder="Unesite broj osobne iskaznice"
+              placeholder="Unesite broj osobne iskaznice ili putovnice"
+              maxLength={20}
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
+            {idNumber.length >= 20 && (
+              <p className="mt-2 text-sm text-amber-600">
+                Maksimalna dužina je 20 znamenki
+              </p>
+            )}
           </div>
 
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
