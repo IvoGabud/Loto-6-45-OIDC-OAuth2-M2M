@@ -7,7 +7,6 @@ import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// POST /api/tickets - Uplata listića (zahtijeva autentifikaciju)
 router.post('/', requireAuth, async (req: Request, res: Response) => {
   try {
     const { idNumber, numbers } = req.body;

@@ -33,14 +33,11 @@ app.get('/health', (req, res) => {
 const frontendPath = path.join(__dirname, '..', 'public');
 app.use(express.static(frontendPath));
 
-// SPA fallback - serve index.html for all non-file requests
 app.use((req, res) => {
-  // If request is for a file (has extension), don't serve index.html
   if (path.extname(req.path)) {
     return res.status(404).send('File not found');
   }
 
-  // Otherwise, serve index.html for client-side routing
   res.sendFile(path.join(frontendPath, 'index.html'));
 });
 

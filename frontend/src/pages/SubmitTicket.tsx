@@ -214,7 +214,7 @@ function SubmitTicket() {
             />
             {idNumber.length >= 20 && (
               <p className="mt-2 text-sm text-amber-600">
-                Maksimalna dužina je 20 znamenki
+                Maksimalna duljina je 20 znamenki
               </p>
             )}
           </div>

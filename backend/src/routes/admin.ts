@@ -8,20 +8,16 @@ const router = express.Router();
 
 router.post('/new-round', checkJwt, async (_req: Request, res: Response) => {
   try {
-    // Check if there's already an active round
     const activeRoundCheck = await pool.query(
       'SELECT id FROM rounds WHERE is_active = true LIMIT 1'
     );
 
-    // If active round exists, return 204 without doing anything
     if (activeRoundCheck.rows.length > 0) {
       return res.status(204).send();
     }
 
-    // Deactivate all previous rounds (safety measure)
     await pool.query('UPDATE rounds SET is_active = false WHERE is_active = true');
 
-    // Create new active round
     await pool.query('INSERT INTO rounds (is_active) VALUES (true)');
 
     res.status(204).send();
